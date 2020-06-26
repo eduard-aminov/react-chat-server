@@ -7,10 +7,13 @@ const app = express()
 const PORT = config.get('port')
 const authRoutes = require('./routes/auth.routes')
 const userRoutes = require('./routes/user.routes')
+const dialogRoutes = require('./routes/dialog.routes')
+
 
 app.use(bodyParser.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/dialog', dialogRoutes)
 
 const start = async () => {
     try {
