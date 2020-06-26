@@ -1,0 +1,29 @@
+const express = require('express')
+const mongoose = require('mongoose')
+const config = require('config')
+const bodyParser = require('body-parser')
+const app = express()
+
+const PORT = config.get('port')
+const authRoutes = require('./routes/auth.routes')
+const userRoutes = require('./routes/user.routes')
+
+app.use(bodyParser.json())
+app.use('/api/auth', authRoutes)
+app.use('/api/user', userRoutes)
+
+const start = async () => {
+    try {
+        await mongoose.connect(config.get('mongoUri'), {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true
+        })
+        app.listen(PORT, () => console.log(`Server started at port ${PORT}`))
+    } catch (e) {
+        console.log('Server error', e.message)
+        process.exit(1)
+    }
+}
+
+start()
