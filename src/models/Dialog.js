@@ -1,14 +1,14 @@
 const { Schema, model } = require('mongoose')
 
 const DialogSchema = new Schema({
-    authorId: {
+    author: {
         type: Schema.Types.ObjectId,
-        unique: true,
+        ref: 'User',
         required: 'Author id is required',
     },
-    partnerId: {
+    partner: {
         type: Schema.Types.ObjectId,
-        unique: true,
+        ref: 'User',
         required: 'Partner id is required',
     },
 }, {

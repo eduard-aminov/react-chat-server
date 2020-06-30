@@ -5,15 +5,22 @@ const bodyParser = require('body-parser')
 const app = express()
 
 const PORT = config.get('port')
+
 const authRoutes = require('./routes/auth.routes')
 const userRoutes = require('./routes/user.routes')
 const dialogRoutes = require('./routes/dialog.routes')
+const messageRoutes = require('./routes/message.routes')
+
+const updateLastSeen = require('./middlewares/updateLastSeen')
 
 
 app.use(bodyParser.json())
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/dialog', dialogRoutes)
+app.use('/api/messages', messageRoutes)
+
+app.use(updateLastSeen)
 
 const start = async () => {
     try {
