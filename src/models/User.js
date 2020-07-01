@@ -8,6 +8,14 @@ const UserSchema = new Schema({
         required: 'Email is required',
         validate: [isEmail, 'Invalid email']
     },
+    firstName: {
+        type: String,
+        required: 'First name is required'
+    },
+    lastName: {
+        type: String,
+        required: 'Last name is required'
+    },
     username: {
         type: String,
         required: 'Username is required'

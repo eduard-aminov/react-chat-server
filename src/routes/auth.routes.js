@@ -1,36 +1,88 @@
 const { Router } = require('express')
+const { bcrypt } = require('bcryptjs')
+const { jwt } = require('jsonwebtoken')
+const { check, validationResult } = require('express-validator')
+const { config } = require('config')
 const router = Router()
 
 const User = require('../models/User')
 
-router.post('/register', (req, res) => {
-    try {
-        const postData = {
-            email: req.body.email,
-            username: req.body.username,
-            password: req.body.password,
+router.post('/register',
+    [check('email', 'Invalid email').normalizeEmail().isEmail()],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array(),
+                    message: 'Invalid register data'
+                })
+            }
+
+            const {
+                email,
+                firstName,
+                lastName,
+                username,
+                password
+            } = req.body
+
+            const candidate = await User.findOne({email})
+            if (candidate) {
+                return res.status(400).json({ message: 'User exist' })
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 12, err => {
+                return res.status(500).json({ message: 'Error occurred while hashing password' })
+            })
+            const user = new User({email, firstName, lastName, username, password: hashedPassword})
+
+            await user.save( (err, user) => {
+                if (err) return res.status(500).json({ message: 'Cannot save user' })
+                return res.json(user)
+            })
+
+        } catch (e) {
+            res.status(500).json({message: 'Something went wrong'})
         }
+    })
 
-        const user = new User(postData)
+router.post('/login',
+    [check('username', 'Username cannot be empty').exists()],
+    [check('password', 'Password cannot be empty').exists()],
+    async (req, res) => {
+        try {
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array(),
+                    message: 'Invalid authorization data'
+                })
+            }
 
-        user.save()
-            .then(obj => {
-                res.json(obj)
-            })
-            .catch(reason => {
-                res.json(reason)
-            })
-    } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
-    }
-})
+            const { username, password} = req.body
 
-router.post('/login', async (req, res) => {
-    try {
+            const user = await User.findOne({ username })
+            if (!user) {
+                return res.status(400).json({ message: 'User does not exist' })
+            }
 
-    } catch (e) {
+            const isPasswordMatch = bcrypt.compare(password, user.password)
+            if (!isPasswordMatch) {
+                return res.status(400).json({ message: 'Authorization data is incorrect' })
+            }
 
-    }
-})
+            const token = jwt(
+                {userId: user._id},
+                config.get('jwtSecret'),
+                {expiresIn: '7d'}
+            )
+
+            return res.json({ token, userId: user.id })
+
+        } catch (e) {
+            res.status(500).json({message: 'Something went wrong'})
+        }
+    })
 
 module.exports = router
