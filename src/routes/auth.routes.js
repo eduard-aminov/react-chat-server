@@ -1,5 +1,5 @@
 const { Router } = require('express')
-const { bcrypt } = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const { jwt } = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
 const { config } = require('config')
@@ -27,22 +27,24 @@ router.post('/register',
                 password
             } = req.body
 
-            const candidate = await User.findOne({email})
+            const candidate = await User.findOne({username})
             if (candidate) {
                 return res.status(400).json({ message: 'User exist' })
             }
 
-            const hashedPassword = await bcrypt.hash(password, 12, err => {
-                return res.status(500).json({ message: 'Error occurred while hashing password' })
-            })
+            const hashedPassword = await bcrypt.hash(password, 12).then(hash => (hash))
             const user = new User({email, firstName, lastName, username, password: hashedPassword})
 
             await user.save( (err, user) => {
-                if (err) return res.status(500).json({ message: 'Cannot save user' })
+                if (err) {
+                    console.log('User saving Error:', err)
+                    return res.status(500).json({ message: 'Cannot save user' })
+                }
                 return res.json(user)
             })
 
         } catch (e) {
+            console.log(e)
             res.status(500).json({message: 'Something went wrong'})
         }
     })
