@@ -1,8 +1,8 @@
 const { Router } = require('express')
 const bcrypt = require('bcrypt')
-const { jwt } = require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const { check, validationResult } = require('express-validator')
-const { config } = require('config')
+const config = require('config')
 const router = Router()
 
 const User = require('../models/User')
@@ -69,12 +69,12 @@ router.post('/login',
                 return res.status(400).json({ message: 'User does not exist' })
             }
 
-            const isPasswordMatch = bcrypt.compare(password, user.password)
+            const isPasswordMatch = await bcrypt.compare(password, user.password)
             if (!isPasswordMatch) {
                 return res.status(400).json({ message: 'Authorization data is incorrect' })
             }
 
-            const token = jwt(
+            const token = jwt.sign(
                 {userId: user._id},
                 config.get('jwtSecret'),
                 {expiresIn: '7d'}

@@ -1,12 +1,10 @@
 const { Schema, model } = require('mongoose')
-const { isEmail } = require('validator')
 
 const UserSchema = new Schema({
     email: {
         type: String,
         unique: true,
         required: 'Email is required',
-        validate: [isEmail, 'Invalid email']
     },
     firstName: {
         type: String,
@@ -29,8 +27,8 @@ const UserSchema = new Schema({
         default: false
     },
     avatar: String,
-    confirm_hash: String,
-    last_seen: {
+    confirmHash: String,
+    lastSeen: {
         type: Date,
         default: new Date()
     },
