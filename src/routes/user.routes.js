@@ -4,7 +4,9 @@ const router = Router()
 const User = require('../models/User')
 const Dialog = require('../models/Dialog')
 
-router.get('/', async (req, res) => {
+const auth = require('../middlewares/auth.middleware')
+
+router.get('/', auth, async (req, res) => {
     try {
         const userId = req.query.user_id
         await User.findById(userId, (err, user) => {
@@ -20,9 +22,9 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.delete('/', async (req, res) => {
+router.delete('/', auth, async (req, res) => {
     try {
-        const userId = req.query.user_id
+        const userId = req.user.userId
         await User.findByIdAndDelete(userId, (err, user) => {
             if (err) {
                 return res.status(404).json({
@@ -38,9 +40,9 @@ router.delete('/', async (req, res) => {
     }
 })
 
-router.get('/dialogs/', async (req, res) => {
+router.get('/dialogs/', auth, async (req, res) => {
     try {
-        const authorId = req.query.author_id
+        const authorId = req.user.userId
         await Dialog.find({author: authorId})
             .populate(['author', 'partner'])
             .exec((err, dialogs) => {

@@ -3,8 +3,9 @@ const router = Router()
 
 const Dialog = require('../models/Dialog')
 const Message = require('../models/Message')
+const auth = require('../middlewares/auth.middleware')
 
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
         const dialogId = req.query.dialog_id
         await Dialog.findById(dialogId, (err, dialog) => {
@@ -20,7 +21,7 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.get('/messages/', async (req, res) => {
+router.get('/messages/', auth, async (req, res) => {
     try {
         const dialogId = req.query.dialog_id
         await Message.find({dialog: dialogId})
@@ -38,10 +39,10 @@ router.get('/messages/', async (req, res) => {
     }
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', auth, (req, res) => {
     try {
         const postData = {
-            author: req.body.author,
+            author: req.user.userId,
             partner: req.body.partner
         }
 
@@ -54,7 +55,7 @@ router.post('/create', (req, res) => {
                 const message = new Message({
                     dialog: dialog._id,
                     text: req.body.text,
-                    user: req.body.author
+                    user: req.user.userId
                 })
 
                 message.save()
@@ -73,7 +74,7 @@ router.post('/create', (req, res) => {
     }
 })
 
-router.delete('/', async (req, res) => {
+router.delete('/', auth, async (req, res) => {
     try {
         const dialogId = req.query.dialog_id
         await Dialog.findByIdAndDelete(dialogId, (err, dialog) => {

@@ -27,9 +27,14 @@ router.post('/register',
                 password
             } = req.body
 
-            const candidate = await User.findOne({username})
+            const candidate = await User.findOne({username, email})
             if (candidate) {
-                return res.status(400).json({ message: 'User exist' })
+                return res.status(400).json({
+                    error: {
+                        code: 10,
+                        message: 'User exist'
+                    }
+                })
             }
 
             const hashedPassword = await bcrypt.hash(password, 12).then(hash => (hash))
