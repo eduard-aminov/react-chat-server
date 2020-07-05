@@ -12,13 +12,22 @@ router.get('/', auth, async (req, res) => {
         await User.findById(userId, (err, user) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'User not found'
+                    error: {
+                        code: 20,
+                        message: 'User not found'
+                    }
                 })
             }
             res.json(user)
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -28,7 +37,10 @@ router.delete('/', auth, async (req, res) => {
         await User.findByIdAndDelete(userId, (err, user) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'User not found'
+                    error: {
+                        code: 20,
+                        message: 'User not found'
+                    }
                 })
             }
             res.json({
@@ -36,7 +48,13 @@ router.delete('/', auth, async (req, res) => {
             })
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -48,13 +66,22 @@ router.get('/dialogs/', auth, async (req, res) => {
             .exec((err, dialogs) => {
                 if (err) {
                     return res.status(404).json({
-                        message: 'Dialogs not found'
+                        error: {
+                            code: 31,
+                            message: 'Dialogs not found'
+                        }
                     })
                 }
                 return res.json(dialogs)
             })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
