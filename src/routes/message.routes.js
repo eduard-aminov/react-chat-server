@@ -11,13 +11,22 @@ router.get('/', auth, async (req, res) => {
         await Message.findById(messageId, (err, message) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'Message not found'
+                    error: {
+                        code: 40,
+                        message: 'Message not found'
+                    }
                 })
             }
             res.json(message)
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -41,7 +50,13 @@ router.post('/create', auth, (req, res) => {
                 res.json(reason)
             })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -51,7 +66,10 @@ router.delete('/', auth, async (req, res) => {
         await Message.findByIdAndDelete(messageId, (err, message) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'Message not found'
+                    error: {
+                        code: 40,
+                        message: 'Message not found'
+                    }
                 })
             }
             res.json({
@@ -59,7 +77,13 @@ router.delete('/', auth, async (req, res) => {
             })
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
