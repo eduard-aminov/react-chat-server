@@ -15,7 +15,7 @@ router.post('/register',
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     error: {
-                        code: 21,
+                        code: 11,
                         errors: errors.array(),
                         message: 'Invalid register data'
                     }
@@ -34,7 +34,7 @@ router.post('/register',
             if (candidate) {
                 return res.status(400).json({
                     error: {
-                        code: 10,
+                        code: 20,
                         message: 'User exist'
                     }
                 })
@@ -48,7 +48,7 @@ router.post('/register',
                     console.log('User saving Error:', err)
                     return res.status(500).json({
                         error:{
-                            code: 11,
+                            code: 21,
                             message: 'Cannot save user'
                         }
                     })
@@ -76,7 +76,7 @@ router.post('/login',
             if (!errors.isEmpty()) {
                 return res.status(400).json({
                     error: {
-                        code: 22,
+                        code: 12,
                         errors: errors.array(),
                         message: 'Invalid authorization data'
                     }
@@ -89,7 +89,7 @@ router.post('/login',
             if (!user) {
                 return res.status(400).json({
                     error: {
-                        code: 12,
+                        code: 22,
                         message: 'User does not exist'
                     }
                 })
@@ -99,7 +99,7 @@ router.post('/login',
             if (!isPasswordMatch) {
                 return res.status(400).json({
                     error: {
-                        code: 22,
+                        code: 12,
                         message: 'Invalid authorization data'
                     } })
             }

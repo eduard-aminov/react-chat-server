@@ -11,34 +11,51 @@ router.get('/', auth, async (req, res) => {
         await Dialog.findById(dialogId, (err, dialog) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'Dialog not found'
+                    error: {
+                        code: 31,
+                        message: 'Dialog not found'
+                    }
                 })
             }
             res.json(dialog)
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
 router.get('/messages/', auth, async (req, res) => {
     try {
         const dialogId = req.query.dialog_id
-        // const userId = req.user.userId
+        const userId = req.user.userId
         await Message
             .find({dialog: dialogId})
             .populate(['dialog'])
             .exec((err, messages) => {
                 if (err) {
                     return res.status(404).json({
-                        message: 'Messages not found'
+                        error: {
+                            code: 41,
+                            message: 'Messages not found'
+                        }
                     })
                 }
                 return res.json(messages)
             })
     } catch (e) {
         console.log(e.message)
-        res.status(500).json({message: 'Something went wrong'})
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -73,7 +90,13 @@ router.post('/create', auth, (req, res) => {
                 res.json(reason)
             })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
@@ -83,7 +106,10 @@ router.delete('/', auth, async (req, res) => {
         await Dialog.findByIdAndDelete(dialogId, (err, dialog) => {
             if (err) {
                 return res.status(404).json({
-                    message: 'Dialog not found'
+                    error: {
+                        code: 31,
+                        message: 'Dialog not found'
+                    }
                 })
             }
             res.json({
@@ -91,7 +117,13 @@ router.delete('/', auth, async (req, res) => {
             })
         })
     } catch (e) {
-        res.status(500).json({message: 'Something went wrong'})
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
     }
 })
 
