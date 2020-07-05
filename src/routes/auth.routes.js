@@ -14,8 +14,11 @@ router.post('/register',
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(400).json({
-                    errors: errors.array(),
-                    message: 'Invalid register data'
+                    error: {
+                        code: 21,
+                        errors: errors.array(),
+                        message: 'Invalid register data'
+                    }
                 })
             }
 
@@ -43,14 +46,24 @@ router.post('/register',
             await user.save( (err, user) => {
                 if (err) {
                     console.log('User saving Error:', err)
-                    return res.status(500).json({ message: 'Cannot save user' })
+                    return res.status(500).json({
+                        error:{
+                            code: 11,
+                            message: 'Cannot save user'
+                        }
+                    })
                 }
                 return res.json(user)
             })
 
         } catch (e) {
-            console.log(e)
-            res.status(500).json({message: 'Something went wrong'})
+            console.log(e.message)
+            res.status(500).json({
+                error: {
+                    code: 1,
+                    message: 'Something went wrong'
+                }
+            })
         }
     })
 
@@ -62,8 +75,11 @@ router.post('/login',
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 return res.status(400).json({
-                    errors: errors.array(),
-                    message: 'Invalid authorization data'
+                    error: {
+                        code: 22,
+                        errors: errors.array(),
+                        message: 'Invalid authorization data'
+                    }
                 })
             }
 
@@ -71,24 +87,39 @@ router.post('/login',
 
             const user = await User.findOne({ username })
             if (!user) {
-                return res.status(400).json({ message: 'User does not exist' })
+                return res.status(400).json({
+                    error: {
+                        code: 12,
+                        message: 'User does not exist'
+                    }
+                })
             }
 
             const isPasswordMatch = await bcrypt.compare(password, user.password)
             if (!isPasswordMatch) {
-                return res.status(400).json({ message: 'Authorization data is incorrect' })
+                return res.status(400).json({
+                    error: {
+                        code: 22,
+                        message: 'Invalid authorization data'
+                    } })
             }
 
             const token = jwt.sign(
                 {userId: user._id},
                 config.get('jwtSecret'),
-                {expiresIn: '7d'}
+                {expiresIn: '7 days'}
             )
 
             return res.json({ token, userId: user.id })
 
         } catch (e) {
-            res.status(500).json({message: 'Something went wrong'})
+            console.log(e.message)
+            res.status(500).json({
+                error: {
+                    code: 1,
+                    message: 'Something went wrong'
+                }
+            })
         }
     })
 

@@ -24,7 +24,9 @@ router.get('/', auth, async (req, res) => {
 router.get('/messages/', auth, async (req, res) => {
     try {
         const dialogId = req.query.dialog_id
-        await Message.find({dialog: dialogId})
+        // const userId = req.user.userId
+        await Message
+            .find({dialog: dialogId})
             .populate(['dialog'])
             .exec((err, messages) => {
                 if (err) {
@@ -35,6 +37,7 @@ router.get('/messages/', auth, async (req, res) => {
                 return res.json(messages)
             })
     } catch (e) {
+        console.log(e.message)
         res.status(500).json({message: 'Something went wrong'})
     }
 })
