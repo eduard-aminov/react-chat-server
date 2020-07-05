@@ -31,6 +31,31 @@ router.get('/', auth, async (req, res) => {
     }
 })
 
+router.get('/me', auth, async (req, res) => {
+    try {
+        const userId = req.user.userId
+        await User.findById(userId, (err, user) => {
+            if (err) {
+                return res.status(404).json({
+                    error: {
+                        code: 20,
+                        message: 'User not found'
+                    }
+                })
+            }
+            res.json(user)
+        })
+    } catch (e) {
+        console.log(e.message)
+        res.status(500).json({
+            error: {
+                code: 1,
+                message: 'Something went wrong'
+            }
+        })
+    }
+})
+
 router.delete('/', auth, async (req, res) => {
     try {
         const userId = req.user.userId
