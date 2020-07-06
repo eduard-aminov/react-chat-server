@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const config = require('config')
 
 const User = require('../models/User')
+const errors = require('../utils/errors')
 
 const authController = {
     async register(req, res) {
@@ -17,38 +18,23 @@ const authController = {
 
             const candidate = await User.findOne({username, email})
             if (candidate) {
-                return res.status(400).json({
-                    error: {
-                        code: 20,
-                        message: 'User exist'
-                    }
-                })
+                errors.userExist(res)
             }
 
             const hashedPassword = await bcrypt.hash(password, 12).then(hash => (hash))
             const user = new User({email, firstName, lastName, username, password: hashedPassword})
 
-            await user.save( (err, user) => {
+            await user.save((err, user) => {
                 if (err) {
-                    console.log('User saving Error:', err)
-                    return res.status(500).json({
-                        error:{
-                            code: 21,
-                            message: 'Cannot save user'
-                        }
-                    })
+                    console.log(err.message)
+                    errors.cannotSaveUser(res)
                 }
                 return res.json(user)
             })
 
         } catch (e) {
             console.log(e.message)
-            res.status(500).json({
-                error: {
-                    code: 1,
-                    message: 'Something went wrong'
-                }
-            })
+            errors.somethingWentWrong(res)
         }
     },
     async login(req, res) {
@@ -57,21 +43,12 @@ const authController = {
 
             const user = await User.findOne({ username })
             if (!user) {
-                return res.status(400).json({
-                    error: {
-                        code: 22,
-                        message: 'User does not exist'
-                    }
-                })
+                errors.userDoesNotExist(res)
             }
 
             const isPasswordMatch = await bcrypt.compare(password, user.password)
             if (!isPasswordMatch) {
-                return res.status(400).json({
-                    error: {
-                        code: 12,
-                        message: 'Invalid authorization data'
-                    } })
+                errors.invalidAuthData(res)
             }
 
             const token = jwt.sign(
@@ -84,12 +61,7 @@ const authController = {
 
         } catch (e) {
             console.log(e.message)
-            res.status(500).json({
-                error: {
-                    code: 1,
-                    message: 'Something went wrong'
-                }
-            })
+            errors.somethingWentWrong(res)
         }
     }
 }
