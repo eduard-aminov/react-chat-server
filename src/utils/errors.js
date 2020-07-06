@@ -38,6 +38,22 @@ const errors = {
                 message: 'User exist'
             }
         })
+    },
+    dialogNotFound(res) {
+        return res.status(404).json({
+            error: {
+                code: 31,
+                message: 'Dialog not found'
+            }
+        })
+    },
+    messagesNotFound(res) {
+        return res.status(404).json({
+            error: {
+                code: 41,
+                message: 'Messages not found'
+            }
+        })
     }
 }
 
