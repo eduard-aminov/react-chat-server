@@ -31,8 +31,10 @@ router.get('/', auth, async (req, res) => {
     }
 })
 
-router.post('/create', auth, (req, res) => {
+router.post('/create', auth, async (req, res) => {
     try {
+        const io = req.app.get('io')
+
         const dialogId = req.query.dialog_id
 
         const postData = {
@@ -41,15 +43,22 @@ router.post('/create', auth, (req, res) => {
             dialog: dialogId
         }
 
-        const message = new Message(postData)
-
-        message.save()
-            .then(obj => {
-                res.json(obj)
+        try {
+            const newMessage = new Message(postData)
+            const savedMessage = await newMessage.save()
+            const message = await savedMessage
+                .populate('dialog', 'partner')
+                .execPopulate()
+            res.json(message)
+            io.emit('SERVER:NEW_MESSAGE', message)
+        } catch (e) {
+            console.log(e.message)
+            return res.status(500).json({
+                error: {
+                    message: e.message
+                }
             })
-            .catch(reason => {
-                res.json(reason)
-            })
+        }
     } catch (e) {
         console.log(e.message)
         res.status(500).json({

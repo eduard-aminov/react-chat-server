@@ -62,9 +62,11 @@ router.get('/messages/', auth, async (req, res) => {
 
 router.post('/create', auth, (req, res) => {
     try {
+        const io = req.app.get('io')
+
         const postData = {
             author: req.user.userId,
-            partner: req.body.partner
+            partner: req.body.partner,
         }
 
         const dialog = new Dialog(postData)

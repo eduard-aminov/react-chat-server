@@ -10,7 +10,13 @@
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
 <script>
-    const socket = io('http://localhost:5000')
+    window.onload = () => {
+        const socket = io('http://localhost:5000')
+
+        socket.on('SERVER:NEW_MESSAGE', (msg) => {
+            console.log('New message:', msg)
+        })
+    }
 </script>
 </body>
 </html>
