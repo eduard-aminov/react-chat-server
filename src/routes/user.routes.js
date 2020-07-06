@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const router = Router()
 
+const app = require('../app')
 const User = require('../models/User')
 const Dialog = require('../models/Dialog')
 

@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const router = Router()
 
+const app = require('../app')
 const Message = require('../models/Message')
 
 const auth = require('../middlewares/auth.middleware')

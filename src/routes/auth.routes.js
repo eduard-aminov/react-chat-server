@@ -5,6 +5,7 @@ const { check, validationResult } = require('express-validator')
 const config = require('config')
 const router = Router()
 
+const app = require('../app')
 const User = require('../models/User')
 
 router.post('/register',
