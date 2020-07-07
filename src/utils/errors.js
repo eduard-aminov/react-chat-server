@@ -47,6 +47,14 @@ const errors = {
             }
         })
     },
+    messageNotFound(res) {
+        return res.status(404).json({
+            error: {
+                code: 40,
+                message: 'Message not found'
+            }
+        })
+    },
     messagesNotFound(res) {
         return res.status(404).json({
             error: {
