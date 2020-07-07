@@ -34,8 +34,16 @@ const errors = {
     userExist(res) {
         return res.status(400).json({
             error: {
-                code: 20,
+                code: 23,
                 message: 'User exist'
+            }
+        })
+    },
+    userNotFound(res) {
+        return res.status(404).json({
+            error: {
+                code: 20,
+                message: 'User not found'
             }
         })
     },
@@ -44,6 +52,14 @@ const errors = {
             error: {
                 code: 31,
                 message: 'Dialog not found'
+            }
+        })
+    },
+    dialogsNotFound(res) {
+        return res.status(404).json({
+            error: {
+                code: 31,
+                message: 'Dialogs not found'
             }
         })
     },
