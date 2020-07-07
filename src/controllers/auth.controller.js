@@ -17,11 +17,9 @@ const authController = {
             } = req.body
 
             const candidate = await User.findOne({username, email})
-            if (candidate) {
-                errors.userExist(res)
-            }
+            if (candidate) errors.userExist(res)
 
-            const hashedPassword = await bcrypt.hash(password, 12).then(hash => (hash))
+            const hashedPassword = await bcrypt.hash(password, 12).then(hash => hash)
             const user = new User({email, firstName, lastName, username, password: hashedPassword})
 
             await user.save((err, user) => {
@@ -37,19 +35,16 @@ const authController = {
             errors.somethingWentWrong(res)
         }
     },
+
     async login(req, res) {
         try {
             const { username, password} = req.body
 
             const user = await User.findOne({ username })
-            if (!user) {
-                errors.userDoesNotExist(res)
-            }
+            if (!user) errors.userDoesNotExist(res)
 
             const isPasswordMatch = await bcrypt.compare(password, user.password)
-            if (!isPasswordMatch) {
-                errors.invalidAuthData(res)
-            }
+            if (!isPasswordMatch) errors.invalidAuthData(res)
 
             const token = jwt.sign(
                 {userId: user._id},

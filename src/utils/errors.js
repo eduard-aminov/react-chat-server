@@ -1,4 +1,11 @@
 const errors = {
+    baseError(res, e) {
+        return res.status(500).json({
+            error: {
+                message: e.message
+            }
+        })
+    },
     somethingWentWrong(res) {
         return res.status(500).json({
             error: {

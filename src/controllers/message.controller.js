@@ -6,9 +6,7 @@ const messageController = {
         try {
             const messageId = req.query.message
             await Message.findById(messageId, (err, message) => {
-                if (err) {
-                    errors.messageNotFound(res)
-                }
+                if (err) errors.messageNotFound(res)
                 res.json(message)
             })
         } catch (e) {
@@ -38,11 +36,7 @@ const messageController = {
                 io.emit('SERVER:NEW_MESSAGE', message)
             } catch (e) {
                 console.log(e.message)
-                return res.status(500).json({
-                    error: {
-                        message: e.message
-                    }
-                })
+                errors.baseError(res, e)
             }
         } catch (e) {
             console.log(e.message)
@@ -54,9 +48,7 @@ const messageController = {
         try {
             const messageId = req.query.message
             await Message.findByIdAndDelete(messageId, (err) => {
-                if (err) {
-                    errors.messageNotFound(res)
-                }
+                if (err) errors.messageNotFound(res)
                 res.json({
                     message: `Message was delete`
                 })

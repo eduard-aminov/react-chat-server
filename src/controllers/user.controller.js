@@ -7,9 +7,7 @@ const userController = {
         try {
             const userId = req.query.user || req.user.userId
             await User.findById(userId, (err, user) => {
-                if (err) {
-                    errors.userNotFound(res)
-                }
+                if (err) errors.userNotFound(res)
                 res.json(user)
             })
         } catch (e) {
@@ -22,9 +20,7 @@ const userController = {
         try {
             const userId = req.user.userId
             await User.findByIdAndDelete(userId, (err, user) => {
-                if (err) {
-                    errors.userNotFound(res)
-                }
+                if (err) errors.userNotFound(res)
                 res.json({
                     message: `User ${user.username} was delete`
                 })
@@ -41,9 +37,7 @@ const userController = {
             await Dialog.find({author: authorId})
                 .populate(['author', 'partner'])
                 .exec((err, dialogs) => {
-                    if (err) {
-                        errors.dialogsNotFound(res)
-                    }
+                    if (err) errors.dialogsNotFound(res)
                     return res.json(dialogs)
                 })
         } catch (e) {
